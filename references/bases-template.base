@@ -1,0 +1,90 @@
+filters:
+  and:
+    - 'file.ext == "md"'
+    - file.inFolder("wiki")
+
+formulas:
+  link_count: 'file.links.length'
+  backlink_count: 'file.backlinks.length'
+  freshness: 'if(updated, date(updated).relative(), file.mtime.relative())'
+  maturity: 'if(status == "mature", "成熟", if(status == "active", "活跃", if(status == "stub", "草稿", if(status == "outdated", "过期", if(status == "conflicting", "冲突", "未标记")))))'
+
+properties:
+  type:
+    displayName: 类型
+  topic:
+    displayName: 主题
+  status:
+    displayName: 状态
+  evidence_level:
+    displayName: 证据等级
+  mode:
+    displayName: 模式
+  updated:
+    displayName: 更新时间
+  formula.link_count:
+    displayName: 出链数
+  formula.backlink_count:
+    displayName: 入链数
+  formula.freshness:
+    displayName: 新鲜度
+  formula.maturity:
+    displayName: 成熟度
+
+views:
+  - type: table
+    name: "Wiki 总览"
+    order:
+      - file.name
+      - type
+      - topic
+      - status
+      - evidence_level
+      - mode
+      - updated
+      - formula.link_count
+      - formula.backlink_count
+    groupBy:
+      property: type
+      direction: ASC
+
+  - type: table
+    name: "需要关注"
+    filters:
+      or:
+        - 'status == "stub"'
+        - 'status == "outdated"'
+        - 'status == "conflicting"'
+    order:
+      - file.name
+      - type
+      - status
+      - topic
+      - updated
+      - formula.freshness
+
+  - type: table
+    name: "归档页"
+    filters:
+      or:
+        - 'type == "archive"'
+        - 'mode == "archive"'
+    order:
+      - file.name
+      - question
+      - archived
+      - sources
+      - status
+
+  - type: table
+    name: "低入链页面"
+    filters:
+      and:
+        - 'formula.backlink_count <= 1'
+        - 'type != "source"'
+    order:
+      - file.name
+      - type
+      - topic
+      - formula.backlink_count
+      - status
