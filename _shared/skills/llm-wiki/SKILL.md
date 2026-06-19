@@ -100,10 +100,10 @@ mode: maintained | archive
 
 | Hook | 触发时机 | 作用 |
 |------|---------|------|
-| `llm-wiki-raw-guard` | 文件修改前 | 阻止对 `raw/` 目录已有文件的修改（允许新建） |
+| `llm-wiki-raw-guard` | 文件修改前 | 阻止对 `raw/` 目录已有文件的修改（允许新建）。设 `LLM_WIKI_ALLOW_RAW_EDIT=1` 可临时放行 |
 | `llm-wiki-post-write-indexer` | 文件修改后 | wiki/ 下非 index/log 文件被修改时，提醒更新索引和日志 |
 
-Hook 配置在平台设置文件中注册，Agent 无法跳过。
+Hook 配置在平台设置文件中注册，Agent 无法跳过。但用户可通过环境变量 `LLM_WIKI_ALLOW_RAW_EDIT=1` 临时放行 raw/ 修改（仅当前会话生效）。
 
 ### Subagent（专项推理分析）
 
@@ -114,7 +114,7 @@ Hook 配置在平台设置文件中注册，Agent 无法跳过。
 
 ## 禁忌
 
-- 不修改 `raw/` 原始资料，除非用户明确要求整理文件名或移动位置。
+- 不修改 `raw/` 原始资料，除非用户明确要求且设 `LLM_WIKI_ALLOW_RAW_EDIT=1` 临时放行。
 - 不在普通 Query 中写文件。
 - 不把新来源只写成孤立摘要而不更新相关知识页。
 - 不在存在矛盾时静默覆盖旧结论；必须保留来源和冲突说明。

@@ -72,11 +72,19 @@ def main():
     if is_new_file(tool_input):
         output(format_allow())
 
+    # 检查环境变量是否显式允许修改 raw/
+    allow_raw_edit = os.environ.get('LLM_WIKI_ALLOW_RAW_EDIT', '').strip() in ('1', 'true', 'yes')
+
+    if allow_raw_edit:
+        output(format_allow())
+
     # 修改 raw/ 目录下已有文件，拒绝
     output(format_deny(
         f"禁止修改 raw/ 目录下的已有文件：{filepath}。"
         f"raw/ 是不可变证据层，原始资料不应被修改。"
-        f"如需整理文件名或移动位置，请用户明确要求。"
+        f"如需修正错误摄入，请在当前会话设置环境变量后重试："
+        f"  PowerShell: $env:LLM_WIKI_ALLOW_RAW_EDIT='1'"
+        f"  Bash: export LLM_WIKI_ALLOW_RAW_EDIT=1"
     ))
 
 

@@ -21,7 +21,7 @@ SKILL.md 瘦身为路由文档（约 100 行），包含：
 
 | Hook | 作用 |
 |------|------|
-| `llm-wiki-raw-guard` | 阻止对 `raw/` 已有文件的修改（允许新建） |
+| `llm-wiki-raw-guard` | 阻止对 `raw/` 已有文件的修改（允许新建）。设 `LLM_WIKI_ALLOW_RAW_EDIT=1` 可临时放行 |
 | `llm-wiki-post-write-indexer` | wiki/ 写入后提醒更新 index.md 和 log.md |
 
 为什么需要 Hook：
@@ -67,7 +67,7 @@ topic: [terrain-generation, pcg]
 
 ### Query 默认只读
 
-普通查询不写文件，避免知识库被闲聊污染。只有用户明确要求保存、沉淀、归档或更新 wiki 时才写入。`llm-wiki-raw-guard` Hook 进一步确保 raw/ 不可修改。
+普通查询不写文件，避免知识库被闲聊污染。只有用户明确要求保存、沉淀、归档或更新 wiki 时才写入。`llm-wiki-raw-guard` Hook 进一步确保 raw/ 不可修改（设 `LLM_WIKI_ALLOW_RAW_EDIT=1` 可临时放行）。
 
 ### Archive 是时间点快照
 

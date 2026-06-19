@@ -24,7 +24,7 @@ LLM Wiki 由三层组成：
 2. **Skills 生效**：CodeBuddy 自动加载 `.codebuddy/skills/` 下的技能
 
 3. **Hooks 生效**：`.codebuddy/settings.json` 中配置的 Hook 自动执行
-   - 修改文件前：`llm-wiki-raw-guard` 阻止对 raw/ 的修改
+   - 修改文件前：`llm-wiki-raw-guard` 阻止对 raw/ 的修改（设 `LLM_WIKI_ALLOW_RAW_EDIT=1` 可临时放行）
    - 修改文件后：`llm-wiki-post-write-indexer` 提醒更新 index.md/log.md
 
 4. **Agents 使用**：`.codebuddy/agents/` 下的 agent 定义在对话中可被调用

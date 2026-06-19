@@ -32,7 +32,7 @@
 └──────────────────────────────────────────────────┘
   ↓
 ┌─── Hook 层 ─────────────────────────────────────┐
-│ 修改前：llm-wiki-raw-guard 阻止修改 raw/     │
+│ 修改前：llm-wiki-raw-guard 阻止修改 raw/（可临时放行） │
 │ 修改后：llm-wiki-post-write-indexer 提醒更新 index/log    │
 └──────────────────────────────────────────────────┘
   ↓
@@ -46,7 +46,7 @@
 
 | Hook | 触发时机 | 作用 | 拦截方式 |
 |------|---------|------|---------|
-| `llm-wiki-raw-guard` | 文件修改前 | 阻止对 `raw/` 目录已有文件的修改（允许新建） | deny（阻止修改） |
+| `llm-wiki-raw-guard` | 文件修改前 | 阻止对 `raw/` 目录已有文件的修改（允许新建）。设 `LLM_WIKI_ALLOW_RAW_EDIT=1` 可临时放行 | deny（阻止修改） |
 | `llm-wiki-post-write-indexer` | 文件修改后 | wiki/ 下非 index/log 文件被修改时，提醒更新索引和日志 | additionalContext（不阻止） |
 
 ### Subagent 列表
@@ -294,8 +294,12 @@ Agent 尝试修改 raw/sources/article.md（已有文件）：
 
 llm-wiki-raw-guard 触发：
   → 检测到修改目标在 raw/ 目录下且文件已存在
-  → 返回 deny，原因："raw/ 目录下的已有文件不可修改，只允许新建文件"
+  → 返回 deny，提示设置 LLM_WIKI_ALLOW_RAW_EDIT=1 可临时放行
   → Agent 收到拒绝，改为只读取 raw 文件，将修改写入 wiki/ 层
+
+如需修正错误摄入（仅当前会话）：
+  PowerShell: $env:LLM_WIKI_ALLOW_RAW_EDIT='1'
+  Bash:       export LLM_WIKI_ALLOW_RAW_EDIT=1
 ```
 
 ## 项目结构
