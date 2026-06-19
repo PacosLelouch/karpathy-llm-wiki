@@ -68,9 +68,9 @@ REQUIRED_HOOKS = [
 
 # _shared/hooks/templates/ required files
 REQUIRED_HOOK_TEMPLATES = [
-    "codebuddy_utils.py",
-    "codex_utils.py",
-    "claude_utils.py",
+    "llm_wiki_hook_utils_codebuddy.py",
+    "llm_wiki_hook_utils_codex.py",
+    "llm_wiki_hook_utils_claude.py",
 ]
 
 # _shared/agents/ required files
