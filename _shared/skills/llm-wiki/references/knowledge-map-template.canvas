@@ -1,0 +1,198 @@
+{
+  "nodes": [
+    {
+      "id": "group-raw",
+      "type": "group",
+      "x": -40,
+      "y": -40,
+      "width": 320,
+      "height": 260,
+      "label": "raw/ 证据层",
+      "color": "1"
+    },
+    {
+      "id": "group-wiki",
+      "type": "group",
+      "x": 360,
+      "y": -40,
+      "width": 720,
+      "height": 520,
+      "label": "wiki/ 结构化知识层",
+      "color": "4"
+    },
+    {
+      "id": "group-schema",
+      "type": "group",
+      "x": 1160,
+      "y": -40,
+      "width": 360,
+      "height": 260,
+      "label": "schema 操作协议层",
+      "color": "6"
+    },
+    {
+      "id": "raw-sources",
+      "type": "text",
+      "x": 0,
+      "y": 20,
+      "width": 240,
+      "height": 90,
+      "text": "# raw/sources\n\n原始文章、论文、会议纪要、网页剪藏。",
+      "color": "1"
+    },
+    {
+      "id": "raw-assets",
+      "type": "text",
+      "x": 0,
+      "y": 130,
+      "width": 240,
+      "height": 70,
+      "text": "# raw/assets\n\n图片、PDF、截图、附件。",
+      "color": "1"
+    },
+    {
+      "id": "wiki-sources",
+      "type": "text",
+      "x": 400,
+      "y": 20,
+      "width": 220,
+      "height": 90,
+      "text": "# wiki/sources\n\n来源摘要页：关键要点、证据、影响。",
+      "color": "4"
+    },
+    {
+      "id": "wiki-concepts",
+      "type": "text",
+      "x": 660,
+      "y": 20,
+      "width": 220,
+      "height": 90,
+      "text": "# wiki/concepts\n\n跨来源综合的概念页。",
+      "color": "4"
+    },
+    {
+      "id": "wiki-entities",
+      "type": "text",
+      "x": 660,
+      "y": 150,
+      "width": 220,
+      "height": 90,
+      "text": "# wiki/entities\n\n算法、工具、项目、人物、组织等实体。",
+      "color": "4"
+    },
+    {
+      "id": "wiki-analyses",
+      "type": "text",
+      "x": 920,
+      "y": 85,
+      "width": 220,
+      "height": 100,
+      "text": "# wiki/analyses\n\n维护型分析与显式归档快照。",
+      "color": "4"
+    },
+    {
+      "id": "wiki-index-log",
+      "type": "text",
+      "x": 560,
+      "y": 310,
+      "width": 360,
+      "height": 100,
+      "text": "# index.md + log.md\n\n内容地图与追加式操作日志。",
+      "color": "5"
+    },
+    {
+      "id": "schema-skill",
+      "type": "text",
+      "x": 1200,
+      "y": 20,
+      "width": 260,
+      "height": 80,
+      "text": "# SKILL.md\n\nCodeBuddy Agent Skill 主协议。",
+      "color": "6"
+    },
+    {
+      "id": "schema-refs",
+      "type": "text",
+      "x": 1200,
+      "y": 120,
+      "width": 260,
+      "height": 80,
+      "text": "# references/\n\n模板、巡检清单、Obsidian/CodeBuddy 指南。",
+      "color": "6"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-raw-to-source",
+      "fromNode": "raw-sources",
+      "fromSide": "right",
+      "toNode": "wiki-sources",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Ingest 编译"
+    },
+    {
+      "id": "edge-source-concepts",
+      "fromNode": "wiki-sources",
+      "fromSide": "right",
+      "toNode": "wiki-concepts",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "抽取概念"
+    },
+    {
+      "id": "edge-source-entities",
+      "fromNode": "wiki-sources",
+      "fromSide": "right",
+      "toNode": "wiki-entities",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "抽取实体"
+    },
+    {
+      "id": "edge-concepts-analysis",
+      "fromNode": "wiki-concepts",
+      "fromSide": "right",
+      "toNode": "wiki-analyses",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "综合分析"
+    },
+    {
+      "id": "edge-entities-analysis",
+      "fromNode": "wiki-entities",
+      "fromSide": "right",
+      "toNode": "wiki-analyses",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "关系分析"
+    },
+    {
+      "id": "edge-wiki-index",
+      "fromNode": "wiki-analyses",
+      "fromSide": "bottom",
+      "toNode": "wiki-index-log",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "更新索引/日志"
+    },
+    {
+      "id": "edge-skill-wiki",
+      "fromNode": "schema-skill",
+      "fromSide": "left",
+      "toNode": "wiki-sources",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "约束操作"
+    },
+    {
+      "id": "edge-refs-skill",
+      "fromNode": "schema-refs",
+      "fromSide": "top",
+      "toNode": "schema-skill",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "模板支持"
+    }
+  ]
+}

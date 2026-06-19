@@ -1,0 +1,12 @@
+# LLM Wiki Agent 元数据定义
+# 各 agent 的指令内容在 instructions/ 目录下的同名 .md 文件中
+
+agents:
+  llm-wiki-linter:
+    name: llm-wiki-linter
+    description: 语义巡检分析——系统性遍历 wiki 页面，交叉验证一致性，输出结构化巡检报告
+    trigger: "巡检|lint|检查|清理|补链|健康检查|断链|孤立页|矛盾"
+  llm-wiki-ingest-compiler:
+    name: llm-wiki-ingest-compiler
+    description: 摄入编译器——处理复杂摄入逻辑：raw → wiki 页面 → cascade updates → index/log 更新
+    trigger: "摄入|ingest|整理资料|归档资料|编译|新增来源"

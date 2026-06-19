@@ -1,31 +1,60 @@
+# Dependencies
+node_modules/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Build output
+dist/
+build/
+*.zip
+
+# 三平台生成目录（由 scripts/sync-platforms.py 生成，真源在 _shared/）
+CodeBuddy/
+Codex/
+ClaudeCode/
+
+# IDE
+.vscode/
+.idea/
+.obsidian/
+*.swp
+*.swo
+*~
+
+# CodeBuddy
+.codebuddy/*
+!.codebuddy/rules/
+!.codebuddy/skills/
+!.codebuddy/agents/
+!.codebuddy/hooks/
+
 # OS
 .DS_Store
 Thumbs.db
 
-# Editors
-.vscode/
-.idea/
+# TypeScript build info
+*.tsbuildinfo
 
-# Python
-__pycache__/
-*.py[cod]
-.pytest_cache/
-.ruff_cache/
-.mypy_cache/
-.venv/
-venv/
+# Test coverage
+coverage/
+htmlcov/
+.coverage
 
-# Obsidian local state
-.obsidian/workspace.json
-.obsidian/workspace-mobile.json
-.obsidian/cache/
-
-# Build/package output
-dist/
-*.zip
+# Environment
+.env
+.env.local
+.env.*.local
 
 # Temporary files
 *.tmp
 *.bak
-*.log
 

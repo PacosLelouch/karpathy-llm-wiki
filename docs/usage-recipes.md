@@ -30,8 +30,34 @@
 请使用 llm-wiki skill，对当前 wiki 做 lint。确定性问题自动修复，语义性问题只报告。
 ```
 
+## 复杂摄入
+
+当摄入内容涉及多个概念/实体/分析页时，建议指定使用 llm-wiki-ingest-compiler agent：
+
+```text
+请使用 llm-wiki skill，摄入这些资料。这个摄入涉及多个概念和实体，请调用 llm-wiki-ingest-compiler agent 协助规划编译策略。
+```
+
+## 深度巡检
+
+语义性巡检建议使用 llm-wiki-linter agent：
+
+```text
+请使用 llm-wiki skill，对当前 wiki 做完整巡检。请调用 llm-wiki-linter agent 进行语义性分析。
+```
+
 ## 优化当前 skill 仓库
 
 ```text
 请使用 llm-wiki skill 和 skill-creator，检查这个 skill 仓库的结构、模板、示例和校验脚本，并提出改进。
+```
+
+## 生成多平台包
+
+```bash
+# 生成三平台文件夹包
+python scripts/sync-platforms.py --format folders
+
+# 生成插件包
+python scripts/sync-platforms.py --format plugins
 ```
