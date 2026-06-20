@@ -39,12 +39,28 @@ Lint 分为"确定性自动修复"和"语义性只报告"。
 
 详细清单见 `references/lint-checklist.md`。
 
-## 使用 Subagent
+## 使用 Subagent（必须）
 
-语义性巡检建议调用 `wiki-linter` subagent，它能：
+Lint 操作分为两阶段，**必须先调用 subagent**，主 agent 不得跳过：
+
+### 阶段 1：语义性巡检 → 调用 `llm-wiki-linter` subagent
+
+subagent 负责：
 - 系统性遍历所有 wiki 页面
-- 交叉验证跨页面一致性
-- 输出结构化巡检报告（已修复 / 需确认 / 建议）
+- 交叉验证跨页面一致性（事实矛盾、过期内容、重复概念、孤立页）
+- 输出结构化巡检报告，包含三类结果：
+  - **已自动修复**：subagent 已完成的确定性修复
+  - **需要人工确认**：语义性问题，附具体位置与原因
+  - **建议后续处理**：合并/拆分/重命名/补页建议
+
+### 阶段 2：确定性修复 → 主 agent 执行
+
+主 agent 收到巡检报告后，执行以下确定性操作：
+- 补全 frontmatter 缺失字段
+- 修正断链
+- 追加 `wiki/log.md` lint 记录
+
+**禁止**：主 agent 不得自行执行语义性巡检来替代 subagent。如果 subagent 不可用，主 agent 应告知用户并仅执行确定性修复。
 
 ## 输出格式
 

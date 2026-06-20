@@ -69,21 +69,21 @@ LLM Wiki 由三层组成：
 
 ## Hook 工作原理
 
-Hook 脚本通过 `llm_wiki_hook_utils.py` 适配不同平台的输出格式：
+Hook 脚本通过 `llm_wiki_hook_utils.py` 适配不同平台的输出格式和工具名集合：
 
 ```
-llm-wiki-raw-guard.py       →  from llm_wiki_hook_utils import format_deny, format_allow, output
-                               → CodeBuddy: {"permissionDecision": "deny", "reason": "..."}
-                               → Codex:     {"permissionDecision": "deny", "reason": "..."}
-                               → Claude:    {"hookSpecificOutput": {"permissionDecision": "deny", ...}}
+llm-wiki-raw-guard.py       →  from llm_wiki_hook_utils import format_deny, format_allow, output, EDIT_TOOLS
+                               → CodeBuddy: {"permissionDecision": "deny", "reason": "..."}     EDIT_TOOLS: {'write_to_file', 'replace_in_file'}
+                               → Codex:     {"hookSpecificOutput": {"permissionDecision": ...}} EDIT_TOOLS: {'Edit', 'Write', 'apply_patch'}
+                               → Claude:    {"hookSpecificOutput": {"permissionDecision": ...}} EDIT_TOOLS: {'Edit', 'Write', 'apply_patch'}
 
-llm-wiki-post-write-indexer.py → from llm_wiki_hook_utils import format_additional_context, output
+llm-wiki-post-write-indexer.py → from llm_wiki_hook_utils import format_additional_context, format_allow, output, EDIT_TOOLS
                                → CodeBuddy: {"additionalContext": "..."}
-                               → Codex:     {"additionalContext": "..."}
-                               → Claude:    {"hookSpecificOutput": {"additionalContext": ...}}
+                               → Codex:     {"hookSpecificOutput": {"additionalContext": "..."}}
+                               → Claude:    {"systemMessage": "...", "hookSpecificOutput": {"permissionDecision": "allow"}}
 ```
 
-每个平台有自己的 `llm_wiki_hook_utils.py`，输出格式硬编码，不做运行时平台检测。
+每个平台有自己的 `llm_wiki_hook_utils.py`，输出格式和 EDIT_TOOLS 集合硬编码，不做运行时平台检测。
 
 ## 参考文件速查
 

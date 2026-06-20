@@ -101,8 +101,9 @@ CodeBuddy/                  # CodeBuddy 文件夹包
 Codex/                      # Codex 文件夹包
 ├── .codex/
 │   ├── hooks/              # Hook 脚本 + llm_wiki_hook_utils.py（Codex 版）
-│   ├── agents/             # TOML 格式
-│   └── config.toml         # Agent + Hook 配置
+│   ├── agents/             # TOML 格式（developer_instructions 字段）
+│   ├── hooks.json          # Hook 配置（独立，匹配 Codex 规范）
+│   └── config.toml         # 全局配置（仅注释，Agent 自动扫描）
 └── .agents/
     └── skills/llm-wiki/    # SKILL.md + references/
 
@@ -141,6 +142,25 @@ dist/
     └── .agents/skills/llm-wiki/  # Skills
 ```
 
+### 安装到项目（推荐）
+
+一键将 LLM Wiki 部署到你的项目，自动与已有配置合并（不会覆盖其他系统的 hooks）：
+
+```bash
+# 安装到指定项目（所有平台）
+python scripts/sync-platforms.py --install /path/to/your/project
+
+# 只安装指定平台
+python scripts/sync-platforms.py --install /path/to/your/project --platform codebuddy
+python scripts/sync-platforms.py --install /path/to/your/project --platform claude
+python scripts/sync-platforms.py --install /path/to/your/project --platform codex
+```
+
+install 模式的特点：
+- 自动清理旧版 LLM Wiki 文件（按 `LLM Wiki` 前缀识别）
+- 与已有的 `settings.json` / `config.toml` 智能合并，保留其他系统的 hooks 和 agents
+- 重复运行安全，幂等操作
+
 ### 同时生成两种
 
 ```bash
@@ -150,11 +170,21 @@ python scripts/sync-platforms.py --format plugins
 
 ## 安装和使用
 
-### 方式一：文件夹包安装
+### 方式一：install 模式安装（推荐）
 
-选择你的平台，将对应目录下的文件复制到项目根目录：
+直接将 LLM Wiki 安装到目标项目，无需手动复制文件：
 
 ```bash
+python scripts/sync-platforms.py --install /path/to/your/project
+```
+
+### 方式二：文件夹包安装
+
+先生成文件夹包，再手动复制：
+
+```bash
+python scripts/sync-platforms.py --format folders
+
 # CodeBuddy 用户
 cp -r CodeBuddy/.codebuddy /path/to/your/project/
 
@@ -166,7 +196,7 @@ cp -r Codex/.agents /path/to/your/project/
 cp -r ClaudeCode/.claude /path/to/your/project/
 ```
 
-### 方式二：插件包安装
+### 方式三：插件包安装
 
 先生成插件包：
 ```bash
@@ -353,9 +383,11 @@ python scripts/sync-platforms.py --format folders
 # 生成插件包
 python scripts/sync-platforms.py --format plugins
 
-# 同时生成两种
-python scripts/sync-platforms.py --format folders
-python scripts/sync-platforms.py --format plugins
+# 一键安装到项目（推荐，自动合并配置）
+python scripts/sync-platforms.py --install /path/to/your/project
+
+# 安装到指定平台
+python scripts/sync-platforms.py --install /path/to/your/project --platform codebuddy
 ```
 
 ### 修改什么、在哪里改

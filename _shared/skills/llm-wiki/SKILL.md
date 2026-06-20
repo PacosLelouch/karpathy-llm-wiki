@@ -31,13 +31,13 @@ description: "This skill should be used when creating, maintaining, querying, ar
 
 优先按用户意图选择一个主操作，然后读取对应的参考文件获取详细协议：
 
-| 操作 | 触发信号 | 参考文件 | 写入行为 |
-|------|---------|---------|---------|
-| **Initialize** | 初始化知识库，或首次 Ingest 缺结构 | `references/initialize.md` | 只创建缺失结构，不覆盖已有文件 |
-| **Ingest** | 摄入/整理/归档资料，提供 URL/文件/文本 | `references/ingest.md` | 更新 raw/wiki/index/log |
-| **Query** | 提问/总结/比较/基于 wiki 回答 | `references/query.md` | 默认只读，不写文件 |
-| **Archive** | 明确要求保存/沉淀/归档/写入 wiki | `references/archive.md` | 新建归档页，更新 index/log |
-| **Lint** | 检查/清理/补链/巡检/健康检查 | `references/lint.md` | 确定性可自动修复，语义性只报告 |
+| 操作 | 触发信号 | 参考文件 | Subagent（⚡ 强制） | 写入行为 |
+|------|---------|---------|-------------------|---------|
+| **Initialize** | 初始化知识库，或首次 Ingest 缺结构 | `references/initialize.md` | — | 只创建缺失结构，不覆盖已有文件 |
+| **Ingest** | 摄入/整理/归档资料，提供 URL/文件/文本 | `references/ingest.md` | **ingest-compiler**（≥5 raw 文件 或 ≥3 page type 时必用） | 更新 raw/wiki/index/log |
+| **Query** | 提问/总结/比较/基于 wiki 回答 | `references/query.md` | — | 默认只读，不写文件 |
+| **Archive** | 明确要求保存/沉淀/归档/写入 wiki | `references/archive.md` | — | 新建归档页，更新 index/log |
+| **Lint** | 检查/清理/补链/巡检/健康检查 | `references/lint.md` | **llm-wiki-linter**（语义性巡检必用，不可跳过） | 确定性可自动修复，语义性只报告 |
 
 额外操作：
 - **Schema/Repo**：用户要求修改 skill、schema、模板、示例、README 或做成仓库。读取 `references/usage-guide.md` 和 `references/wiki-schema-template.md`。
@@ -105,12 +105,22 @@ mode: maintained | archive
 
 Hook 配置在平台设置文件中注册，Agent 无法跳过。但用户可通过环境变量 `LLM_WIKI_ALLOW_RAW_EDIT=1` 临时放行 raw/ 修改（仅当前会话生效）。
 
-### Subagent（专项推理分析）
+### Subagent（⚡ 强制使用协议）
 
-| Subagent | 适用场景 | 作用 |
+以下操作必须调用对应 subagent，主 agent 不得跳过或自行替代：
+
+| Subagent | 触发条件 | 分工 |
 |----------|---------|------|
-| `llm-wiki-linter` | 执行 Lint 操作时 | 语义性巡检分析，输出结构化巡检报告 |
-| `llm-wiki-ingest-compiler` | 执行 Ingest 操作时 | 处理复杂编译逻辑：raw → wiki 页面 → cascade updates → index/log 更新 |
+| `llm-wiki-linter` | 任何 Lint 操作 | **subagent**：语义性巡检 → 输出报告。**主 agent**：执行确定性修复 |
+| `llm-wiki-ingest-compiler` | Ingest 满足 ≥5 raw 文件 或 ≥3 page type 或 ≥2 系统 | **subagent**：读取 raw → 输出编译方案 + cascade 分析。**主 agent**：执行文件写入 |
+
+主 agent 在 Ingest/Lint 操作中的角色仅限于：
+- 读取协议文件以确定是否满足 subagent 触发条件
+- 调用 subagent 并等待其输出
+- 执行 subagent 返回的修复/写入指令
+- 追加 log 记录
+
+**禁止** 主 agent 在触发条件满足时直接执行 subagent 的工作（如遍历所有页面做语义分析、自行规划多页面编译方案）。
 
 ## 禁忌
 

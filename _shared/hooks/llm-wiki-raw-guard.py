@@ -13,7 +13,7 @@ import os
 import sys
 
 # Python 运行时自动将脚本所在目录加入 sys.path
-from llm_wiki_hook_utils import format_deny, format_allow, output
+from llm_wiki_hook_utils import format_deny, format_allow, output, EDIT_TOOLS
 
 
 def is_raw_file(filepath):
@@ -57,9 +57,9 @@ def main():
     tool_name = data.get('tool_name', data.get('tool', ''))
     tool_input = data.get('tool_input', data.get('input', {}))
 
-    # 只拦截文件修改类工具
-    edit_tools = {'write_to_file', 'replace_in_file', 'edit_file', 'write', 'edit'}
-    if tool_name.lower() not in edit_tools:
+    # 只拦截文件修改类工具（使用平台特定的工具名集合）
+    # Codex 工具名区分大小写（Edit/Write/apply_patch），用大小写不敏感匹配做兼容
+    if tool_name not in EDIT_TOOLS and tool_name.lower() not in {t.lower() for t in EDIT_TOOLS}:
         output(format_allow())
 
     filepath = tool_input.get('filePath', tool_input.get('path', tool_input.get('file', '')))

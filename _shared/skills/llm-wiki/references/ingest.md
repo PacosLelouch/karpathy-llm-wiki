@@ -62,6 +62,30 @@ raw 模板见 `references/raw-template.md`。
 - Follow-up questions: ...
 ```
 
-## 复杂摄入建议
+## 复杂摄入（必须使用 Subagent）
 
-当摄入内容涉及多个概念/实体/分析页时，建议调用 `ingest-compiler` subagent 协助规划编译策略和 cascade 更新。
+满足以下**任一**条件时，必须调用 `ingest-compiler` subagent：
+- 原始资料文件数 ≥ 5
+- 预计生成 ≥ 3 种不同 page type 的 wiki 页面（如同时涉及 source + concept + entity + analysis）
+- 摄入内容跨越 ≥ 2 个系统/领域
+
+### subagent 职责
+
+`ingest-compiler` 负责：
+1. 读取所有 raw 文件并提取知识结构
+2. 输出**编译方案**：哪些文件编译为 source / entity / concept / analysis
+3. 规划 **cascade 影响面**：哪些已有页面需要更新
+4. 识别可能的概念重叠和冲突
+
+### 主 agent 职责
+
+收到编译方案后，主 agent 负责执行：
+- 创建 raw 副本
+- 按方案创建/更新 wiki 页面
+- 更新 `index.md`、`log.md`、`overview.md`
+
+### 例外
+
+仅在以下情况主 agent 可直接处理（无需 subagent）：
+- 单文件摄入，且仅新增/更新 ≤ 2 个 wiki 页面
+- 新增内容不涉及概念/实体/分析的交叉引用
