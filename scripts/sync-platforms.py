@@ -224,14 +224,14 @@ def build_llm_wiki_hooks_claude():
         "PreToolUse": [
             {
                 "matcher": edit_matcher,
-                "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/llm-wiki-raw-guard.py\"",
+                "command": "python \"${CLAUDE_PROJECT_DIR}/.claude/hooks/llm-wiki-raw-guard.py\"",
                 "description": f"{HOOK_PREFIX}Raw 不可变守卫：阻止修改 raw/ 已有文件"
             }
         ],
         "PostToolUse": [
             {
                 "matcher": edit_matcher,
-                "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/llm-wiki-post-write-indexer.py\"",
+                "command": "python \"${CLAUDE_PROJECT_DIR}/.claude/hooks/llm-wiki-post-write-indexer.py\"",
                 "description": f"{HOOK_PREFIX}写入后索引提醒"
             }
         ]
@@ -245,7 +245,8 @@ def build_llm_wiki_hooks_codex():
     - 每个事件类型下是 matcher group 列表
     - 每个 matcher group 包含 matcher（正则）和 hooks（handler 列表）
     - handler 必须有 type = "command"，以及 command、timeout、statusMessage
-    - 命令推荐使用 git root 绝对路径
+    - command：Unix/macOS 命令，使用 git root 绝对路径（2>/dev/null || pwd 回退非Git项目）
+    - commandWindows：Windows 命令，使用 %cd% 获取当前工作目录
     """
     edit_matcher = PLATFORM_EDIT_MATCHERS['codex']
     return {
@@ -255,7 +256,8 @@ def build_llm_wiki_hooks_codex():
                 "hooks": [
                     {
                         "type": "command",
-                        "command": 'python "$(git rev-parse --show-toplevel)/.codex/hooks/llm-wiki-raw-guard.py"',
+                        "command": 'python "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.codex/hooks/llm-wiki-raw-guard.py"',
+                        "commandWindows": 'py -3 "%cd%\\.codex\\hooks\\llm-wiki-raw-guard.py"',
                         "timeout": 30,
                         "statusMessage": f"{HOOK_PREFIX}Checking raw immutability"
                     }
@@ -268,7 +270,8 @@ def build_llm_wiki_hooks_codex():
                 "hooks": [
                     {
                         "type": "command",
-                        "command": 'python "$(git rev-parse --show-toplevel)/.codex/hooks/llm-wiki-post-write-indexer.py"',
+                        "command": 'python "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.codex/hooks/llm-wiki-post-write-indexer.py"',
+                        "commandWindows": 'py -3 "%cd%\\.codex\\hooks\\llm-wiki-post-write-indexer.py"',
                         "timeout": 30,
                         "statusMessage": f"{HOOK_PREFIX}Post-write index reminder"
                     }

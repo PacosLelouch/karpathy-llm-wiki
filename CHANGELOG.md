@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fixed
+- 修复 ClaudeCode Hook 路径占位符语法：`$CLAUDE_PROJECT_DIR` → `${CLAUDE_PROJECT_DIR}`
+- 修复 Codex Hook 配置：添加 `commandWindows` 字段支持 Windows，非 Git 项目回退到 `pwd`
+
 ### Added
 - 三层架构重构：Skill + Hook + Subagent。
 - `_shared/` 真源目录：所有内容在 `_shared/` 维护，通过 sync 脚本生成三平台文件。
