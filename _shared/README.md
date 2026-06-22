@@ -100,6 +100,7 @@ llm-wiki-post-write-indexer.py → from llm_wiki_hook_utils import format_additi
 | 实体页模板 | `references/entity-template.md` |
 | 分析页模板 | `references/analysis-template.md` |
 | 归档页模板 | `references/archive-template.md` |
+| Overview 模板 | `references/overview-template.md` |
 | Index 模板 | `references/index-template.md` |
 | Log 模板 | `references/log-template.md` |
 | Schema 总纲模板 | `references/wiki-schema-template.md` |

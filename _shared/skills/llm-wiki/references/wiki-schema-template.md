@@ -36,6 +36,7 @@ wiki/
 | concept | `wiki/concepts/` | 概念综合页 | `concept-template.md` |
 | analysis | `wiki/analyses/` | 维护型分析 | `analysis-template.md` |
 | archive | `wiki/analyses/` | 问答快照 | `archive-template.md` |
+| overview | `wiki/overview.md` | 领域入口页 | `overview-template.md` |
 | index | `wiki/index.md` | 内容地图 | `index-template.md` |
 | log | `wiki/log.md` | 操作日志 | `log-template.md` |
 
@@ -60,8 +61,22 @@ mode: maintained | archive
 - `type`：页面类别。
 - `topic`：跨目录主题标签，用于 Obsidian Bases、Dataview 和 `index.md` 分组。
 - `status`：页面成熟度或健康状态。
-- `evidence_level`：证据等级。
+- `evidence_level`：证据等级，受控值含义：
+  - `primary`：直接来自单一原始来源的事实陈述。
+  - `secondary`：来自二手资料（综述、翻译、引用）的陈述。
+  - `synthesized`：综合多个来源推导得出的结论或对比。
+  - `speculative`：证据不足的推测性结论，需标注不确定性。
 - `mode`：`maintained` 表示会持续更新；`archive` 表示时间点快照。
+
+## overview.md 定位
+
+`overview.md` 是**领域入口页**，职责：
+
+- 提供领域全貌的一句话到一段话概述。
+- 链接到各 concept/entity/analysis 页面，作为导航入口。
+- 列出当前开放问题和关键争议。
+
+`overview.md` **不应**重复 concept 或 analysis 页面的具体对比内容（如对比表格、详细分析），只做引导和摘要。具体内容属于各自的专题页面。
 
 ## 工作流总览
 

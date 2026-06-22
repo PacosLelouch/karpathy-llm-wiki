@@ -53,7 +53,7 @@ raw/                         # 原始资料，不修改
 wiki/                        # LLM 维护的知识层
   index.md                   # 内容索引
   log.md                     # 追加式操作日志
-  overview.md                # 全局概览 / 当前综合理解
+  overview.md                # 领域入口页（导航+概述，不重复专题页面内容）
   sources/                   # 每个来源的摘要页
   entities/                  # 人物、组织、项目、工具、算法、游戏等实体
   concepts/                  # 概念、理论、机制、技术、主题

@@ -54,6 +54,28 @@ mode: maintained | archive
 - 正文内标签只用于人类阅读或临时标注。
 - 可用嵌套标签：`pcg/noise`、`status/conflicting`。
 
+### 标签分类体系
+
+建议按以下维度组织标签，避免随意造词：
+
+| 维度 | 格式 | 示例 |
+|------|------|------|
+| 工具/平台 | `tool/<name>` | `tool/codebuddy`、`tool/claudecode`、`tool/codex` |
+| 主题/领域 | `topic/<name>` | `topic/配置格式`、`topic/安全模型`、`topic/插件系统` |
+| 类型 | `type/<name>` | `type/对比`、`type/演进`、`type/实体` |
+
+裸标签（如 `#codebuddy`）也可使用，但嵌套标签优先，便于 Dataview 过滤。
+
+### 各页面类型标签要求
+
+| 页面类型 | tags 要求 | 常见标签示例 |
+|----------|----------|-------------|
+| source | 至少 1 个主题标签 | `tool/codebuddy`、`topic/配置格式` |
+| entity | 至少 1 个工具/平台标签 | `tool/claudecode` |
+| concept | 至少 1 个主题标签 + 1 个类型标签 | `topic/安全模型`、`type/对比` |
+| analysis | 至少 1 个主题标签 + 1 个类型标签 | `topic/插件系统`、`type/对比` |
+| overview | 至少 1 个主题标签 | `topic/ai-coding` |
+
 ## 对话引用
 
 - 对话中引用文件使用项目相对路径：`wiki/concepts/perlin-noise.md`。
