@@ -17,9 +17,16 @@ import json
 import os
 import re
 import shutil
+import sys
 import zipfile
 
-import yaml
+try:
+    import yaml
+except ImportError as e:
+    print(f"错误：无法导入 yaml 模块")
+    print(f"请安装 PyYAML：pip install PyYAML")
+    print(f"详细错误：{e}")
+    sys.exit(1)
 
 # 项目根目录
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

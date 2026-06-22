@@ -172,8 +172,10 @@ def validate(root: Path) -> tuple[list[str], list[str]]:
                 instruction_path = agents_dir / "instructions" / f"{agent_name}.md"
                 if not instruction_path.is_file():
                     errors.append(f"Missing agent instruction: _shared/agents/instructions/{agent_name}.md")
-        except Exception:
-            warnings.append("Could not parse _shared/agents/agents.yaml; skipping agent instruction checks")
+        except ImportError as e:
+            warnings.append(f"PyYAML not installed; skipping agent instruction checks. Install with: pip install PyYAML")
+        except Exception as e:
+            warnings.append(f"Could not parse _shared/agents/agents.yaml; skipping agent instruction checks. Error: {e}")
 
     # examples/ checks
     for rel in REQUIRED_EXAMPLES:

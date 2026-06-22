@@ -6,11 +6,34 @@
 
 ## 前置条件
 
+### Python 环境
+
 - **Python 3.8+**：Hook 脚本用 Python 编写，需要系统 PATH 中有 `python` 命令
   - Windows：安装 [Python](https://www.python.org/downloads/) 时勾选 "Add Python to PATH"
   - macOS/Linux：`python3 --version` 可用时，可创建软链接 `sudo ln -s $(which python3) /usr/local/bin/python`
   - 验证：在终端运行 `python --version`，应输出 Python 3.8+
-- **PyYAML**：sync 脚本依赖 `yaml` 模块，运行 `pip install pyyaml` 安装
+
+### Python 依赖
+
+项目中需要在本地运行的 Python 脚本及其依赖：
+
+| 脚本 | 用途 | 依赖 | 安装方式 |
+|------|------|------|---------|
+| `scripts/sync-platforms.py` | 从 `_shared/` 真源生成三平台文件 | `PyYAML` (yaml 模块) | `pip install PyYAML` |
+| `scripts/validate_repo.py` | 校验仓库结构完整性 | `PyYAML` (yaml 模块，可选) | `pip install PyYAML` |
+
+**安装所有依赖：**
+```bash
+pip install PyYAML
+```
+
+**验证依赖安装：**
+```bash
+python -c "import yaml; print('PyYAML installed successfully')"
+```
+
+### 其他要求
+
 - **Git Bash**（仅 Windows + CodeBuddy 用户）：在 CodeBuddy 设置 → Hooks → 高级设置中，将执行器配置为 `C:\Program Files\Git\bin\bash.exe`
 
 ## 三层架构
