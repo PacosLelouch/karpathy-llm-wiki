@@ -33,13 +33,15 @@ SKILL.md 瘦身为路由文档（约 100 行），包含：
 
 | Subagent | 作用 |
 |----------|------|
-| `llm-wiki-linter` | 语义性巡检分析，输出结构化巡检报告 |
-| `llm-wiki-ingest-compiler` | 复杂摄入编译：raw → wiki 页面 → cascade updates → index/log 更新 |
+| `llm-wiki-linter` | 语义性巡检分析，输出 YAML 结构化报告（auto_fixed/needs_review/suggestions） |
+| `llm-wiki-ingest-compiler` | 复杂摄入编译：raw → wiki 页面 → cascade 更新规划，输出 YAML 编译方案（create_pages/update_pages/cascade） |
 
 为什么需要 Subagent：
-- 语义性 lint 和复杂摄入编译需要深度分析，不适合全部写在 SKILL.md 中
+- 语义性 lint 和复杂摄入编译需要独立上下文做深度分析，主 agent context 不被大规模 wiki 页面污染
 - 按需调用，不常驻上下文，节省 token
-- 专注单一职责，输出更结构化
+- 意图驱动 + 轻量预判分流：简单操作（单来源摄入、确定性巡检）主 agent 直接处理；复杂操作才调用 subagent
+- subagent 输出严格 YAML 结构化方案，主 agent 按字段遍历执行，不依赖"理解"自然语言报告
+- 零重复原则：`references/*.md` 是主 agent 协议（做什么 + 何时委托），`agents/instructions/*.md` 是 subagent 协议（怎么分析 + 输出什么 YAML），两套文件不重叠
 
 ## 核心取舍
 
@@ -75,7 +77,7 @@ topic: [terrain-generation, pcg]
 
 ### Lint 权限分级
 
-确定性问题可自动修复；语义性判断只报告，避免 LLM 过度修改知识库。`llm-wiki-linter` Subagent 专门处理语义性巡检。
+Lint 分为快速巡检（主 agent 直接执行确定性检查）和深度巡检（调用 `llm-wiki-linter` subagent 做语义分析）。模糊意图时主 agent 先快速巡检，再根据规模建议是否深度巡检。确定性问题可自动修复；语义性判断只报告，避免 LLM 过度修改知识库。
 
 ## 多平台生成策略
 

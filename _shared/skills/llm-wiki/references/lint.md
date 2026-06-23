@@ -1,29 +1,30 @@
 # Lint 操作协议
 
-Lint 分为"确定性自动修复"和"语义性只报告"。
+## 分流标准
 
-## 可自动修复
+| 场景 | 判断方式 | 处理 |
+|------|---------|------|
+| **快速巡检** | 用户明确要求修断链、补 frontmatter、同步索引等确定性检查 | 主 agent 直接执行 |
+| **深度巡检** | 用户明确要求检查矛盾、过期、概念缺口、重复页等语义性问题 | 调用 `llm-wiki-linter` subagent |
+| **模糊意图** | 用户只说"做个 lint"，未明确范围 | 主 agent 先执行快速巡检，再根据 wiki 规模和发现的问题迹象建议是否需要深度巡检，由用户确认 |
 
-仅修复可验证、低风险的问题：
+## 快速巡检（主 agent 直接执行）
 
-- `wiki/index.md` 漏掉实际存在的 wiki 页面：补条目，摘要可用 `(no summary)` 占位。
-- `wiki/index.md` 指向不存在页面：标记 `[MISSING]`，不要直接删除条目。
-- wiki 内部链接目标不存在，但能唯一定位到同名文件：修正链接。
-- frontmatter 缺少稳定字段：在不改变正文含义的前提下补字段。
-- `status`、`type`、`updated` 等字段格式明显不一致：规范化。
-- `log.md` 缺少本次 lint 记录：追加记录。
+读取 `references/lint-checklist.md`，逐项检查并修复。该清单是确定性检查的唯一真源，深度巡检的 subagent 也引用同一清单。
 
-## 只报告，不自动修复
+## 深度巡检（调用 `llm-wiki-linter` subagent）
 
-以下依赖语义判断，默认只报告：
+subagent 输出 YAML 结构化报告，主 agent 遍历执行。subagent 的分析方法论和 YAML schema 见 `agents/instructions/llm-wiki-linter.md`。
 
-- 事实矛盾、来源冲突、过期观点。
-- 页面是否应合并、拆分、重命名或废弃。
-- 概念定义是否准确。
-- 重要概念/实体是否缺页。
-- 孤立页面是否真的无价值。
-- `mode: archive` 页面引用的来源后来发生重大变化。
-- 证据等级是否需要人工调整。
+### 主 agent 执行 subagent 的 YAML 报告
+
+收到 YAML 后，按字段遍历执行（字段名由 subagent 输出决定，主 agent 无需预知 schema）：
+
+1. **`auto_fixed`**：subagent 已完成的确定性修复，主 agent 仅记录到 `wiki/log.md`
+2. **`needs_review`**：语义性问题，整理为人类可读报告呈现给用户，不自动修复
+3. **`suggestions`**：合并/拆分/重命名建议，呈现给用户
+
+如遇 YAML 格式异常（字段缺失、类型不符），fallback 到人工确认，不自行猜测执行。
 
 ## Post-Lint
 
@@ -31,48 +32,11 @@ Lint 分为"确定性自动修复"和"语义性只报告"。
 
 ```markdown
 ## [YYYY-MM-DD] lint | 范围
+- Mode: quick | deep
 - Issues found: ...
 - Auto-fixed: ...
 - Report-only: ...
 - Remaining: ...
 ```
 
-详细清单见 `references/lint-checklist.md`。
-
-## 使用 Subagent（必须）
-
-Lint 操作分为两阶段，**必须先调用 subagent**，主 agent 不得跳过：
-
-### 阶段 1：语义性巡检 → 调用 `llm-wiki-linter` subagent
-
-subagent 负责：
-- 系统性遍历所有 wiki 页面
-- 交叉验证跨页面一致性（事实矛盾、过期内容、重复概念、孤立页）
-- 输出结构化巡检报告，包含三类结果：
-  - **已自动修复**：subagent 已完成的确定性修复
-  - **需要人工确认**：语义性问题，附具体位置与原因
-  - **建议后续处理**：合并/拆分/重命名/补页建议
-
-### 阶段 2：确定性修复 → 主 agent 执行
-
-主 agent 收到巡检报告后，执行以下确定性操作：
-- 补全 frontmatter 缺失字段
-- 修正断链
-- 追加 `wiki/log.md` lint 记录
-
-**禁止**：主 agent 不得自行执行语义性巡检来替代 subagent。如果 subagent 不可用，主 agent 应告知用户并仅执行确定性修复。
-
-## 输出格式
-
-```markdown
-## 巡检结果
-
-### 已自动修复
-- ...
-
-### 需要人工确认
-- ...
-
-### 建议后续处理
-- ...
-```
+如果 subagent 不可用，主 agent 仅执行快速巡检，并告知用户深度巡检未执行。

@@ -76,8 +76,10 @@ python -c "import yaml; print('PyYAML installed successfully')"
 
 | Subagent | 适用场景 | 作用 |
 |----------|---------|------|
-| `llm-wiki-linter` | 执行 Lint 操作时 | 语义性巡检分析，输出结构化巡检报告 |
-| `llm-wiki-ingest-compiler` | 执行 Ingest 操作时 | 处理复杂编译逻辑：raw → wiki 页面 → cascade updates → index/log 更新 |
+| `llm-wiki-linter` | 深度巡检（检查矛盾、过期、概念缺口等语义性问题） | 语义性巡检分析，输出 YAML 结构化报告（auto_fixed/needs_review/suggestions） |
+| `llm-wiki-ingest-compiler` | 复杂摄入（需创建 concept/entity/analysis 页面或 cascade 更新） | 处理复杂编译逻辑，输出 YAML 编译方案（create_pages/update_pages/cascade） |
+
+简单操作（单来源摄入、快速巡检）由主 agent 直接处理，无需 subagent。模糊意图时主 agent 做轻量预判（快速扫描内容结构或先执行确定性检查），再决定是否调用 subagent。
 
 ## 适合什么场景
 
@@ -279,8 +281,9 @@ Hook 作用：
   → llm-wiki-raw-guard：确认 raw/ 文件未被修改 ✅
   → llm-wiki-post-write-indexer：检测到 wiki/ 下文件变更，提醒确认 index.md 和 log.md 已更新
 
-Subagent 作用（复杂摄入时自动调用）：
-  → llm-wiki-ingest-compiler：处理 raw → wiki 编译逻辑，执行级联更新
+Subagent 作用（复杂摄入时调用）：
+  → llm-wiki-ingest-compiler：读取 raw → 规划多页面编译方案 → 输出 YAML（create_pages/update_pages/cascade）
+  → 主 agent 遍历 YAML 执行文件写入
 ```
 
 ### 示例 3：查询（只读）
@@ -336,8 +339,9 @@ Hook 作用：
   → llm-wiki-raw-guard：确认修复过程未触及 raw/ ✅
   → llm-wiki-post-write-indexer：修复后提醒确认 index.md 和 log.md 一致性
 
-Subagent 作用：
-  → llm-wiki-linter：执行语义性巡检分析（矛盾检测、内容质量评估）
+Subagent 作用（深度巡检时调用）：
+  → llm-wiki-linter：遍历所有页面做语义分析 → 输出 YAML（auto_fixed/needs_review/suggestions）
+  → 主 agent 执行确定性修复，语义问题报告给用户
 ```
 
 ### 示例 6：Hook 拦截保护

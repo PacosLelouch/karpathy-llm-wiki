@@ -24,7 +24,9 @@
 
 - 语义性 lint 和复杂摄入编译需要深度分析，不适合全部写在 SKILL.md 中
 - Subagent 按需调用，不常驻上下文，节省 token
-- 专注单一职责，输出更结构化
+- 专注单一职责，输出严格 YAML 结构化方案，主 agent 可直接遍历执行
+- 简单操作（单来源摄入、确定性巡检）由主 agent 直接处理，无需 subagent
+- `references/*.md` 是主 agent 协议，`agents/instructions/*.md` 是 subagent 协议，两者零重复
 
 ## Token 节省策略
 

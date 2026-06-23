@@ -26,24 +26,34 @@
 
 ## 巡检知识库
 
+快速巡检（确定性检查，主 agent 直接执行，无需 subagent）：
+
+```text
+请使用 llm-wiki skill，对当前 wiki 做快速巡检。修复断链、补全 frontmatter、同步索引。
+```
+
+模糊意图时（主 agent 先快速巡检，再建议是否深度巡检）：
+
 ```text
 请使用 llm-wiki skill，对当前 wiki 做 lint。确定性问题自动修复，语义性问题只报告。
 ```
 
 ## 复杂摄入
 
-当摄入内容涉及多个概念/实体/分析页时，建议指定使用 llm-wiki-ingest-compiler agent：
+当摄入内容涉及多个概念/实体/分析页时，主 agent 会调用 llm-wiki-ingest-compiler subagent，subagent 输出 YAML 编译方案后由主 agent 执行：
 
 ```text
 请使用 llm-wiki skill，摄入这些资料。这个摄入涉及多个概念和实体，请调用 llm-wiki-ingest-compiler agent 协助规划编译策略。
 ```
 
+也可不指定，主 agent 会快速扫描 raw 内容结构判断复杂度，自动决定是否调用 subagent。
+
 ## 深度巡检
 
-语义性巡检建议使用 llm-wiki-linter agent：
+语义性巡检使用 llm-wiki-linter subagent，subagent 输出 YAML 巡检报告后由主 agent 执行：
 
 ```text
-请使用 llm-wiki skill，对当前 wiki 做完整巡检。请调用 llm-wiki-linter agent 进行语义性分析。
+请使用 llm-wiki skill，对当前 wiki 做深度巡检。请调用 llm-wiki-linter agent 进行语义性分析，检查矛盾、过期内容和概念缺口。
 ```
 
 ## 优化当前 skill 仓库
